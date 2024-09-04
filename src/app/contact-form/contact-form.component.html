@@ -1,0 +1,73 @@
+<form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+  <nz-card nzTitle="Formulario de Contacto" class="contact-card">
+    <div class="form-content">
+      <div class="form-fields-image">
+        <div class="form-fields">
+          <nz-form-item>
+            <nz-form-label [nzFor]="'email'" nzRequired>Email</nz-form-label>
+            <nz-form-control nzErrorTip="Por favor ingrese un email válido">
+              <input nz-input type="email" id="email" formControlName="email" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzFor]="'nombres'" nzRequired>Nombres</nz-form-label>
+            <nz-form-control nzErrorTip="Por favor ingrese nombres válidos">
+              <input nz-input type="text" id="nombres" formControlName="nombres" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzFor]="'apellidos'" nzRequired>Apellidos</nz-form-label>
+            <nz-form-control nzErrorTip="Por favor ingrese apellidos válidos">
+              <input nz-input type="text" id="apellidos" formControlName="apellidos" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzFor]="'comentarios'" nzRequired>Comentarios</nz-form-label>
+            <nz-form-control nzErrorTip="Por favor ingrese un comentario">
+              <textarea nz-input id="comentarios" formControlName="comentarios"></textarea>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzFor]="'adjunto'">Adjunto</nz-form-label>
+            <nz-form-control>
+              <input type="file" id="adjunto" (change)="onFileSelected($event)" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-control>
+              <button nz-button nzType="primary" type="submit" class="submit-button">Enviar</button>
+              <button nz-button nzType="default" (click)="resetForm()" class="reset-button">Limpiar</button>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div class="image-preview" *ngIf="imageUrl">
+          <img [src]="imageUrl" alt="Imagen adjunta" class="contact-card-image" />
+      </div>
+      </div>
+    </div>
+  </nz-card>
+</form>
+
+<nz-card nzTitle="Lista de Contactos" *ngIf="contactos.length > 0" class="contact-list-card">
+  <nz-list [nzDataSource]="contactos" [nzRenderItem]="item">
+    <ng-template #item let-contacto>
+      <nz-list-item>
+        <div class="contact-item">
+          <span class="contact-info">
+            {{ contacto.nombres }} {{ contacto.apellidos }} - {{ contacto.email }}
+          </span>
+          <span class="contact-actions">
+            <button nz-button nzType="default" (click)="editContacto(contacto)">Editar</button>
+            <button nz-button nzType="dashed" (click)="deleteContacto(contacto.id)">Eliminar</button>
+          </span>
+        </div>
+      </nz-list-item>
+    </ng-template>
+  </nz-list>
+</nz-card>

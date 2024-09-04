@@ -1,0 +1,57 @@
+.contact-form {
+  max-width: 800px;
+  margin: auto;
+}
+
+.contact-card {
+  margin-bottom: 20px;
+}
+
+.submit-button {
+  width: 100%;
+}
+
+.contact-list-card {
+  margin-top: 20px;
+}
+
+.contact-card-item {
+  margin-bottom: 20px;
+}
+
+.contact-card-image {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.form-fields-image {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-fields {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.image-preview {
+  width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-actions {
+  margin-top: 10px;
+}
+
+.contact-actions button {
+  margin-right: 10px;
+}
+
+.reset-button {
+  margin-left: 8px;
+}

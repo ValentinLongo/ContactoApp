@@ -1,0 +1,34 @@
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
+
+# Angular cache
+.angular/
+
+# Compiled output
+dist/
+out-tsc/
+build/
+
+# Environment variables
+src/environments/*.ts
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.DS_Store
+
+# System files
+Thumbs.db
