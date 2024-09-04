@@ -11,8 +11,6 @@ dist/
 out-tsc/
 build/
 
-# Environment variables
-src/environments/*.ts
 
 # Logs
 logs
