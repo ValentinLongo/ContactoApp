@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ContactService } from '../contact.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { TranslationService } from '../translation.service';
 
 @Component({
   selector: 'app-contact-form',
@@ -16,18 +17,22 @@ export class ContactFormComponent implements OnInit {
   contactoIdToEdit: number | null = null;
   contactos: any[] = [];
   imageUrl: string | null = null;
+  public translationService: TranslationService;
+  selectedLanguage: string = 'en';
 
   constructor(
     private fb: FormBuilder,
     private contactService: ContactService,
     private modal: NzModalService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    translationService: TranslationService
   ) {
+    this.translationService = translationService;
     this.contactForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      nombres: ['', [Validators.required, Validators.pattern('^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$')]],
-      apellidos: ['', [Validators.required, Validators.pattern('^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$')]],
-      comentarios: ['', [Validators.required, Validators.pattern('^[a-zA-ZñÑáéíóúÁÉÍÓÚ.,!? ]+$')]],
+      nombres: ['', Validators.required],
+      apellidos: ['', Validators.required],
+      comentarios: ['', Validators.required],
       adjunto: ['']
     });
   }
@@ -48,7 +53,7 @@ export class ContactFormComponent implements OnInit {
         };
         reader.readAsDataURL(this.selectedFile);
       } else {
-        this.message.error('El archivo debe ser una imagen o un PDF');
+        this.message.error(this.translationService.translate('FILE_INVALID_TYPE'));
       }
     }
   }
@@ -56,7 +61,7 @@ export class ContactFormComponent implements OnInit {
   onSubmit(): void {
     if (this.contactForm.valid) {
       this.modal.confirm({
-        nzTitle: '¿Está seguro de que desea enviar el formulario?',
+        nzTitle: this.translationService.translate('CONFIRM_SUBMISSION'),
         nzOnOk: () => {
           const formData = new FormData();
           formData.append('email', this.contactForm.get('email')?.value);
@@ -70,26 +75,26 @@ export class ContactFormComponent implements OnInit {
 
           if (this.editMode && this.contactoIdToEdit !== null) {
             this.contactService.updateContacto(this.contactoIdToEdit, formData).subscribe(() => {
-              this.message.success('Contacto actualizado correctamente');
+              this.message.success(this.translationService.translate('CONTACT_UPDATED_SUCCESS'));
               this.resetForm();
               this.loadContactos();
             }, error => {
               console.error('Error al actualizar el contacto:', error);
-              this.message.error('Error al actualizar el contacto');
+              this.message.error(this.translationService.translate('CONTACT_UPDATED_ERROR'));
             });
           } else {
             this.contactService.createContacto(formData).subscribe(() => {
-              this.message.success('Contacto creado correctamente');
+              this.message.success(this.translationService.translate('CONTACT_CREATED_SUCCESS'));
               this.resetForm();
               this.loadContactos();
             }, error => {
               console.error('Error al crear el contacto:', error);
-              this.message.error('Error al crear el contacto');
+              this.message.error(this.translationService.translate('CONTACT_CREATED_ERROR'));
             });
           }
         },
         nzOnCancel: () => {
-          this.message.info('Envío cancelado');
+          this.message.info(this.translationService.translate('SUBMISSION_CANCELLED'));
         }
       });
     }
@@ -122,27 +127,37 @@ export class ContactFormComponent implements OnInit {
 
   deleteContacto(id: number): void {
     this.modal.confirm({
-      nzTitle: '¿Estás seguro de que deseas eliminar este contacto?',
+      nzTitle: this.translationService.translate('CONFIRM_DELETION'),
       nzOnOk: () => {
         this.contactService.deleteContacto(id).subscribe(() => {
-          this.message.success('Contacto eliminado correctamente');
+          this.message.success(this.translationService.translate('CONTACT_DELETED_SUCCESS'));
           this.loadContactos();
         }, error => {
           console.error('Error al eliminar el contacto:', error);
-          this.message.error('Error al eliminar el contacto');
+          this.message.error(this.translationService.translate('CONTACT_DELETED_ERROR'));
         });
       },
       nzOnCancel: () => {
-        this.message.info('Eliminación cancelada');
+        this.message.info(this.translationService.translate('DELETION_CANCELLED'));
       }
     });
   }
 
   resetForm(): void {
     this.contactForm.reset();
-    this.imageUrl = null;
     this.selectedFile = null;
     this.editMode = false;
     this.contactoIdToEdit = null;
+    this.imageUrl = null;
   }
+
+  clearFile(): void {
+    this.resetForm();
+  }
+
+  switchLanguage(language: 'en' | 'es'): void {
+    this.selectedLanguage = language;
+    this.translationService.setLanguage(language); 
+  }
+  
 }

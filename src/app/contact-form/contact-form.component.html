@@ -1,81 +1,72 @@
+<div class="language-switcher">
+  <nz-select [(ngModel)]="selectedLanguage" (ngModelChange)="switchLanguage($event)">
+    <nz-option nzValue="en" nzLabel="English"></nz-option>
+    <nz-option nzValue="es" nzLabel="Español"></nz-option>
+  </nz-select>
+</div>
 <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
-  <nz-card nzTitle="Formulario de Contacto" class="contact-card">
+  <nz-card nzTitle="{{ translationService.translate('CONTACT_FORM_TITLE') }}" class="contact-card">
     <div class="form-content">
       <div class="form-fields-image">
         <div class="form-fields">
-          <!-- Form fields go here -->
           <nz-form-item>
-            <nz-form-label [nzFor]="'email'" nzRequired>Email</nz-form-label>
-            <nz-form-control nzErrorTip="Por favor ingrese un email válido">
+            <nz-form-label [nzFor]="'email'" nzRequired>{{ translationService.translate('EMAIL') }}</nz-form-label>
+            <nz-form-control nzErrorTip="{{ translationService.translate('EMAIL_ERROR_TIP') }}">
               <input nz-input type="email" id="email" formControlName="email" />
             </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
-            <nz-form-label [nzFor]="'nombres'" nzRequired>Nombres</nz-form-label>
-            <nz-form-control nzErrorTip="Por favor ingrese nombres válidos">
+            <nz-form-label [nzFor]="'nombres'" nzRequired>{{ translationService.translate('FIRST_NAME') }}</nz-form-label>
+            <nz-form-control nzErrorTip="{{ translationService.translate('FIRST_NAME_ERROR_TIP') }}">
               <input nz-input type="text" id="nombres" formControlName="nombres" />
             </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
-            <nz-form-label [nzFor]="'apellidos'" nzRequired>Apellidos</nz-form-label>
-            <nz-form-control nzErrorTip="Por favor ingrese apellidos válidos">
+            <nz-form-label [nzFor]="'apellidos'" nzRequired>{{ translationService.translate('LAST_NAME') }}</nz-form-label>
+            <nz-form-control nzErrorTip="{{ translationService.translate('LAST_NAME_ERROR_TIP') }}">
               <input nz-input type="text" id="apellidos" formControlName="apellidos" />
             </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
-            <nz-form-label [nzFor]="'comentarios'" nzRequired>Comentarios</nz-form-label>
-            <nz-form-control nzErrorTip="Por favor ingrese un comentario">
-              <textarea nz-input id="comentarios" formControlName="comentarios"></textarea>
+            <nz-form-label [nzFor]="'comentarios'" nzRequired>{{ translationService.translate('COMMENTS') }}</nz-form-label>
+            <nz-form-control nzErrorTip="{{ translationService.translate('COMMENTS_ERROR_TIP') }}">
+              <textarea nz-input formControlName="comentarios"></textarea>
             </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
-            <nz-form-label [nzFor]="'adjunto'">Adjunto</nz-form-label>
-            <nz-form-control>
-              <input type="file" id="adjunto" (change)="onFileSelected($event)" />
-            </nz-form-control>
+            <nz-form-label [nzFor]="'adjunto'">{{ translationService.translate('ATTACHMENT') }}</nz-form-label>
+            <input type="file" (change)="onFileSelected($event)" />
           </nz-form-item>
-
-          <div class="form-buttons">
-            <nz-form-item>
-              <nz-form-control>
-                <button nz-button nzType="primary" type="submit" class="submit-button">Enviar</button>
-              </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-              <nz-form-control>
-                <button nz-button nzType="default" (click)="resetForm()" class="reset-button">Limpiar</button>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
         </div>
-
-        <div class="image-preview" *ngIf="imageUrl">
-          <img [src]="imageUrl" alt="Imagen adjunta" class="contact-card-image" />
+        <div *ngIf="imageUrl" class="image-preview">
+          <img [src]="imageUrl" alt="Selected Image" />
+          <button nz-button (click)="clearFile()">{{ translationService.translate('CLEAR') }}</button>
         </div>
       </div>
     </div>
+
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" [disabled]="contactForm.invalid">{{ translationService.translate('SUBMIT') }}</button>
+      </nz-form-control>
+    </nz-form-item>
   </nz-card>
 </form>
 
-<nz-card nzTitle="Lista de Contactos" *ngIf="contactos.length > 0" class="contact-list-card">
-  <nz-list [nzDataSource]="contactos" [nzRenderItem]="item">
-    <ng-template #item let-contacto>
-      <nz-list-item>
-        <div class="contact-item">
-          <div class="contact-info">
-            <h4>{{ contacto.nombres }} {{ contacto.apellidos }}</h4>
-            <p>{{ contacto.email }}</p>
-          </div>
-          <div class="contact-actions">
-            <button nz-button nzType="default" (click)="editContacto(contacto)">Editar</button>
-            <button nz-button nzType="dashed" (click)="deleteContacto(contacto.id)">Eliminar</button>
-          </div>
+<nz-card nzTitle="{{ translationService.translate('CONTACTS_LIST_TITLE') }}" class="contact-card">
+  <nz-list>
+    <nz-list-item *ngFor="let item of contactos">
+      <div class="contact-item">
+        <span>{{ item.email }} - {{ item.nombres }} {{ item.apellidos }}</span>
+        <div class="contact-actions">
+          <button nz-button (click)="editContacto(item)">{{ translationService.translate('EDIT') }}</button>
+          <button nz-button nzType="default" (click)="deleteContacto(item.id)">{{ translationService.translate('DELETE') }}</button>
         </div>
-      </nz-list-item>
-    </ng-template>
+      </div>
+    </nz-list-item>
   </nz-list>
 </nz-card>

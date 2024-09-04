@@ -13,6 +13,7 @@ import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { es_ES } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import es from '@angular/common/locales/es';
+import { TranslationService } from './translation.service';
 
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -24,6 +25,7 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 registerLocaleData(es);
 
@@ -48,11 +50,10 @@ registerLocaleData(es);
     NzSpaceModule,
     NzMessageModule,
     NzAlertModule,
-    NzModalModule
+    NzModalModule,
+    NzSelectModule
   ],
-  providers: [
-    { provide: NZ_I18N, useValue: es_ES }
-  ],
+  providers: [TranslationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
