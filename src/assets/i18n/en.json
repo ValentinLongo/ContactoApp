@@ -1,0 +1,13 @@
+{
+    "EMAIL": "Email",
+    "NOMBRES": "First Name",
+    "APELLIDOS": "Last Name",
+    "COMENTARIOS": "Comments",
+    "ADJUNTO": "Attachment",
+    "ENVIAR": "Submit",
+    "LIMPIAR": "Clear",
+    "ERROR_EMAIL": "Please enter a valid email address",
+    "ERROR_NOMBRES": "Please enter your first name",
+    "ERROR_APELLIDOS": "Please enter your last name",
+    "ERROR_COMENTARIOS": "Please enter your comments"
+  }

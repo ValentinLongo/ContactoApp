@@ -3,6 +3,7 @@
     <div class="form-content">
       <div class="form-fields-image">
         <div class="form-fields">
+          <!-- Form fields go here -->
           <nz-form-item>
             <nz-form-label [nzFor]="'email'" nzRequired>Email</nz-form-label>
             <nz-form-control nzErrorTip="Por favor ingrese un email válido">
@@ -38,17 +39,23 @@
             </nz-form-control>
           </nz-form-item>
 
-          <nz-form-item>
-            <nz-form-control>
-              <button nz-button nzType="primary" type="submit" class="submit-button">Enviar</button>
-              <button nz-button nzType="default" (click)="resetForm()" class="reset-button">Limpiar</button>
-            </nz-form-control>
-          </nz-form-item>
+          <div class="form-buttons">
+            <nz-form-item>
+              <nz-form-control>
+                <button nz-button nzType="primary" type="submit" class="submit-button">Enviar</button>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <button nz-button nzType="default" (click)="resetForm()" class="reset-button">Limpiar</button>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
         </div>
 
         <div class="image-preview" *ngIf="imageUrl">
           <img [src]="imageUrl" alt="Imagen adjunta" class="contact-card-image" />
-      </div>
+        </div>
       </div>
     </div>
   </nz-card>
@@ -59,13 +66,14 @@
     <ng-template #item let-contacto>
       <nz-list-item>
         <div class="contact-item">
-          <span class="contact-info">
-            {{ contacto.nombres }} {{ contacto.apellidos }} - {{ contacto.email }}
-          </span>
-          <span class="contact-actions">
+          <div class="contact-info">
+            <h4>{{ contacto.nombres }} {{ contacto.apellidos }}</h4>
+            <p>{{ contacto.email }}</p>
+          </div>
+          <div class="contact-actions">
             <button nz-button nzType="default" (click)="editContacto(contacto)">Editar</button>
             <button nz-button nzType="dashed" (click)="deleteContacto(contacto.id)">Eliminar</button>
-          </span>
+          </div>
         </div>
       </nz-list-item>
     </ng-template>

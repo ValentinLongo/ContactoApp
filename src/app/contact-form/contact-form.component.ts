@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ContactService } from '../contact.service';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-contact-form',
@@ -15,12 +17,17 @@ export class ContactFormComponent implements OnInit {
   contactos: any[] = [];
   imageUrl: string | null = null;
 
-  constructor(private fb: FormBuilder, private contactService: ContactService) {
+  constructor(
+    private fb: FormBuilder,
+    private contactService: ContactService,
+    private modal: NzModalService,
+    private message: NzMessageService
+  ) {
     this.contactForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      nombres: ['', Validators.required],
-      apellidos: ['', Validators.required],
-      comentarios: ['', Validators.required],
+      nombres: ['', [Validators.required, Validators.pattern('^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$')]],
+      apellidos: ['', [Validators.required, Validators.pattern('^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$')]],
+      comentarios: ['', [Validators.required, Validators.pattern('^[a-zA-ZñÑáéíóúÁÉÍÓÚ.,!? ]+$')]],
       adjunto: ['']
     });
   }
@@ -32,46 +39,59 @@ export class ContactFormComponent implements OnInit {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imageUrl = e.target.result;
-      };
-      reader.readAsDataURL(this.selectedFile);
+      const file = input.files[0];
+      if (['image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
+        this.selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.imageUrl = e.target.result;
+        };
+        reader.readAsDataURL(this.selectedFile);
+      } else {
+        this.message.error('El archivo debe ser una imagen o un PDF');
+      }
     }
   }
 
   onSubmit(): void {
     if (this.contactForm.valid) {
-        const formData = new FormData();
-        formData.append('email', this.contactForm.get('email')?.value);
-        formData.append('nombres', this.contactForm.get('nombres')?.value);
-        formData.append('apellidos', this.contactForm.get('apellidos')?.value);
-        formData.append('comentarios', this.contactForm.get('comentarios')?.value);
+      this.modal.confirm({
+        nzTitle: '¿Está seguro de que desea enviar el formulario?',
+        nzOnOk: () => {
+          const formData = new FormData();
+          formData.append('email', this.contactForm.get('email')?.value);
+          formData.append('nombres', this.contactForm.get('nombres')?.value);
+          formData.append('apellidos', this.contactForm.get('apellidos')?.value);
+          formData.append('comentarios', this.contactForm.get('comentarios')?.value);
 
-        if (this.selectedFile) {
+          if (this.selectedFile) {
             formData.append('adjunto', this.selectedFile, this.selectedFile.name);
-        }
+          }
 
-        if (this.editMode && this.contactoIdToEdit !== null) {
+          if (this.editMode && this.contactoIdToEdit !== null) {
             this.contactService.updateContacto(this.contactoIdToEdit, formData).subscribe(() => {
-                alert('Contacto actualizado correctamente');
-                this.resetForm();
-                this.loadContactos();
+              this.message.success('Contacto actualizado correctamente');
+              this.resetForm();
+              this.loadContactos();
             }, error => {
-                console.error('Error al actualizar el contacto:', error);
-                alert('Error al actualizar el contacto');
+              console.error('Error al actualizar el contacto:', error);
+              this.message.error('Error al actualizar el contacto');
             });
-        } else {
+          } else {
             this.contactService.createContacto(formData).subscribe(() => {
-                alert('Contacto creado correctamente');
-                this.resetForm();
-                this.loadContactos();
+              this.message.success('Contacto creado correctamente');
+              this.resetForm();
+              this.loadContactos();
             }, error => {
-                console.error('Error al crear el contacto:', error);
-                alert('Error al crear el contacto');
+              console.error('Error al crear el contacto:', error);
+              this.message.error('Error al crear el contacto');
             });
+          }
+        },
+        nzOnCancel: () => {
+          this.message.info('Envío cancelado');
         }
+      });
     }
   }
 
@@ -85,38 +105,44 @@ export class ContactFormComponent implements OnInit {
     this.editMode = true;
     this.contactoIdToEdit = contacto.id;
     this.contactForm.patchValue({
-        email: contacto.email,
-        nombres: contacto.nombres,
-        apellidos: contacto.apellidos,
-        comentarios: contacto.comentarios,
+      email: contacto.email,
+      nombres: contacto.nombres,
+      apellidos: contacto.apellidos,
+      comentarios: contacto.comentarios,
     });
 
     if (contacto.adjunto) {
-        this.imageUrl = 'data:image/jpeg;base64,' + contacto.adjunto; // Asegúrate de que el prefijo sea correcto para el tipo de imagen
+      this.imageUrl = 'data:image/jpeg;base64,' + contacto.adjunto;
     } else {
-        this.imageUrl = null;
+      this.imageUrl = null;
     }
 
     this.selectedFile = null;
-}
+  }
 
   deleteContacto(id: number): void {
-    this.contactService.deleteContacto(id).subscribe(() => {
-      alert('Contacto eliminado correctamente');
-      this.loadContactos();
+    this.modal.confirm({
+      nzTitle: '¿Estás seguro de que deseas eliminar este contacto?',
+      nzOnOk: () => {
+        this.contactService.deleteContacto(id).subscribe(() => {
+          this.message.success('Contacto eliminado correctamente');
+          this.loadContactos();
+        }, error => {
+          console.error('Error al eliminar el contacto:', error);
+          this.message.error('Error al eliminar el contacto');
+        });
+      },
+      nzOnCancel: () => {
+        this.message.info('Eliminación cancelada');
+      }
     });
   }
 
   resetForm(): void {
     this.contactForm.reset();
+    this.imageUrl = null;
     this.selectedFile = null;
     this.editMode = false;
     this.contactoIdToEdit = null;
-    this.imageUrl = null;
-  }
-
-  clearFile(): void {
-    this.selectedFile = null;
-    this.imageUrl = null;
   }
 }

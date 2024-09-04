@@ -22,6 +22,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzMessageModule } from 'ng-zorro-antd/message';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 registerLocaleData(es);
 
@@ -44,7 +46,9 @@ registerLocaleData(es);
     NzIconModule,
     NzListModule,
     NzSpaceModule,
-    NzMessageModule
+    NzMessageModule,
+    NzAlertModule,
+    NzModalModule
   ],
   providers: [
     { provide: NZ_I18N, useValue: es_ES }

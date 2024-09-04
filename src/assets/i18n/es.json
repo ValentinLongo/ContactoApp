@@ -1,0 +1,13 @@
+{
+    "EMAIL": "Correo electrónico",
+    "NOMBRES": "Nombre",
+    "APELLIDOS": "Apellido",
+    "COMENTARIOS": "Comentarios",
+    "ADJUNTO": "Adjunto",
+    "ENVIAR": "Enviar",
+    "LIMPIAR": "Limpiar",
+    "ERROR_EMAIL": "Por favor, introduzca una dirección de correo electrónico válida",
+    "ERROR_NOMBRES": "Por favor, introduzca su nombre",
+    "ERROR_APELLIDOS": "Por favor, introduzca su apellido",
+    "ERROR_COMENTARIOS": "Por favor, introduzca sus comentarios"
+  }
